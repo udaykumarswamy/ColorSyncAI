@@ -1,0 +1,17 @@
+pandas
+numpy
+scikit-learn
+langgraph-checkpoint-sqlite
+langgraph
+langchain
+openai
+langchain-community
+langchain-openai
+graphviz
+pygraphviz
+flask
+opencv-python
+python-dotenv
+flask-cors
+bs4
+logging

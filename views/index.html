@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ColorSync</title>
+    <!-- Font Awesome for icons -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        height: 100vh;
+        background-image: url("https://www.hongkongda.com/wp-content/uploads/2024/05/aim_18741_1.jpg");
+        background-size: cover;
+        background-position: center center;
+        background-repeat: no-repeat;
+        position: relative;
+      }
+      
+      body::after {
+        content: "";
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 150vh;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.4); /* Dark overlay */
+      }
+
+      /* Header Styles */
+      h1 {
+        position: fixed; /* Fix the header at the top */
+        top: 20px; /* Adjust the top position as needed */
+        left: 50%; /* Center horizontally */
+        transform: translateX(-50%); /* Center horizontally */
+        margin: 0;
+        color: white; /* Change color to white for better visibility */
+        text-align: center;
+        z-index: 2; /* Ensure it's above other content */
+      }
+
+      .caption {
+        position: fixed; /* Fix the caption below the header */
+        top: 70px; /* Adjust the top position to align with the header */
+        left: 50%; /* Center horizontally */
+        transform: translateX(-50%); /* Center horizontally */
+        font-size: 16px;
+        color: white; /* Change color to white for better visibility */
+        font-style: italic;
+        margin: 0;
+        text-align: center;
+        z-index: 2; /* Ensure it's above other content */
+      }
+
+      /* Container Styles */
+      .container {
+        display: flex;
+        height: calc(
+          100vh - 120px
+        ); /*Adjust height to fit below the fixed header */
+        padding: 0px;
+        gap: 20px;
+        position: fixed;
+        top: 95px; /* Add top margin to avoid overlapping with the header */
+        z-index: 1;
+        overflow: hidden;
+      }
+
+      .upload-container,
+      .feedback-container,
+      .shopping-container {
+        flex: 1;
+        min-width: 400px;
+        padding: 10px;
+        border: 2px solid #333;
+        border-radius: 10px;
+        background-color: rgba(255, 255, 255, 0.8);
+        box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+        overflow-y: auto; /* Enable vertical scrolling */
+        height: calc(100vh - 200px); /* Fixed height */
+        width: 40%; /* Fixed width for each container */
+        display: flex;
+        flex-direction: column; /* Ensure content flows vertically */
+      }
+
+      .upload-container {
+        max-width: 400px; /* Limit width of upload container */
+        max-height: 800px;
+      }
+
+      .feedback-container,
+      .shopping-container {
+        opacity: 0.5; /* Disabled look */
+        pointer-events: none; /* Disable interactions */
+        
+      }
+
+      .upload-container h2,
+      .feedback-container h2,
+      .shopping-container h2 {
+        margin-top: 0; /* Remove default margin for h2 */
+      }
+
+      .upload-container p,
+      .feedback-container p,
+      .shopping-container p {
+        margin: 0; /* Remove default margin for paragraphs */
+      }
+
+      .scrollable-content {
+        flex: 1; /* Allow content to grow and fill the container */
+        overflow-y: auto; /* Enable scrolling for the content */
+      }
+
+
+      .upload-container {
+        max-width: 400px; /* Limit width of upload container */
+      }
+
+      /* Loading Spinner Styles */
+      .loading-spinner {
+        border: 4px solid rgba(0, 0, 0, 0.1);
+        border-top: 4px solid #3498db; /* Blue color for the spinner */
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        animation: spin 1s linear infinite;
+        margin: 20px auto;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      .loading-text {
+        text-align: center;
+        font-size: 16px;
+        color: #333;
+        margin-top: 10px;
+      }
+      /* Hide default file input */
+      input[type="file"] {
+        display: none;
+      }
+
+      /* Custom button for file input */
+      label[for="file-input"] {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 10px 20px;
+        border-radius: 5px;
+        background-color: #4caf50;
+        color: white;
+        cursor: pointer;
+        font-size: 16px;
+        margin: 10px;
+        transition: background-color 0.3s ease;
+      }
+
+      label[for="file-input"] i {
+        margin-right: 8px;
+      }
+
+      label[for="file-input"]:hover {
+        background-color: #45a049;
+      }
+
+      #preview {
+        margin-top: 15px;
+        display: none;
+        max-width: 100%;
+        min-width: 200px;
+        min-height: 200px;
+        border-radius: 10px;
+        border: 1px solid #ccc;
+        padding: 5px;
+      }
+
+      /* Style for buttons with icons */
+      button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 10px 20px;
+        border-radius: 5px;
+        border: none;
+        cursor: pointer;
+        font-size: 16px;
+        background-color: #555;
+        color: white;
+        transition: all 0.3s ease;
+        margin: 10px;
+      }
+
+      button i {
+        margin-right: 8px;
+      }
+
+      button:hover {
+        background-color: #444;
+      }
+
+      #clear-button {
+        background-color: #f44336;
+      }
+
+      #clear-button:hover {
+        background-color: #d32f2f;
+      }
+
+      #camera-container {
+        position: relative;
+        display: inline-block;
+        max-width: 100%;
+        width: 80%;
+        margin-top: 20px;
+      }
+
+      video {
+        max-width: 100%;
+        border-radius: 10px;
+        border: 1px solid #ccc;
+      }
+
+      canvas {
+        display: none;
+      }
+
+      /* Flex container for the upload and camera buttons */
+      .button-group {
+        display: flex;
+        justify-content: center;
+        gap: 20px; /* Adds space between buttons */
+      }
+    </style>
+  </head>
+  <body>
+    <h1>ColorSync</h1>
+    <p class="caption">Style Made Easy</p>
+
+    <div class="container">
+      <!-- Upload Container -->
+      <div class="upload-container">
+        <h2>Upload Image</h2>
+        <div class="scrollable-content">
+          <form id="upload-form">
+            <div class="button-group">
+              <label for="file-input"
+                ><i class="fas fa-upload"></i> Choose File</label
+              >
+              <input
+                type="file"
+                id="file-input"
+                name="image"
+                accept=".jpg, .jpeg, .png"
+                required
+                onchange="previewImage(event)"
+              />
+              <button
+                type="button"
+                id="open-camera-button"
+                onclick="openCamera()"
+              >
+                <i class="fas fa-camera"></i> Open Camera
+              </button>
+            </div>
+            <br /><br />
+            <img id="preview" src="#" alt="Image Preview" />
+            <br />
+            <button type="submit" id="upload-button">
+              <i class="fas fa-upload"></i> Let's Style
+            </button>
+            <button type="button" id="clear-button" onclick="clearImage()">
+              <i class="fas fa-trash-alt"></i> Clear
+            </button>
+          </form>
+
+          <!-- Camera access section -->
+          <div id="camera-container">
+            <video
+              id="video"
+              width="100%"
+              height="auto"
+              style="display: none"
+              autoplay
+            ></video>
+            <button
+              type="button"
+              id="capture-button"
+              onclick="captureImage()"
+              style="display: none"
+            >
+              <i class="fas fa-camera-retro"></i> Capture Image
+            </button>
+            <button
+              type="button"
+              id="cancel-button"
+              onclick="cancelCamera()"
+              style="display: none"
+            >
+              <i class="fas fa-times-circle"></i> Cancel
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Feedback Container -->
+      <div class="feedback-container" id="feedback-container">
+        <h2>Feedback</h2>
+        <div class="scrollable-content">
+          <p>No feedback available yet. Upload an image to see feedback.</p>
+        </div>
+      </div>
+
+      <!-- Shopping Container -->
+      <div class="shopping-container" id="shopping-container">
+        <h2>Shopping</h2>
+        <div class="scrollable-content">
+          <p>
+            No shopping suggestions available yet. Upload an image to see
+            recommendations.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const canvas = document.createElement("canvas");
+      const video = document.getElementById("video");
+      const context = canvas.getContext("2d");
+      const feedbackContainer = document.getElementById("feedback-container");
+      const shoppingContainer = document.getElementById("shopping-container");
+
+      // Open the camera and show video feed
+      function openCamera() {
+        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+          navigator.mediaDevices
+            .getUserMedia({ video: true })
+            .then(function (stream) {
+              video.srcObject = stream;
+              video.style.display = "block";
+              document.getElementById("capture-button").style.display =
+                "inline-block";
+              document.getElementById("cancel-button").style.display =
+                "inline-block";
+              document.getElementById("open-camera-button").style.display =
+                "none";
+            })
+            .catch(function (error) {
+              console.log("Error accessing the webcam:", error);
+            });
+        }
+      }
+
+      // Capture the image from the camera
+      function captureImage() {
+        const video = document.getElementById("video");
+        const canvas = document.createElement("canvas");
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        const context = canvas.getContext("2d");
+
+        // Capture the frame from the video
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+        // Convert canvas to a Blob and create a file-like object
+        canvas.toBlob((blob) => {
+          const file = new File([blob], "captured-image.png", {
+            type: "image/png",
+          });
+
+          // Create a new DataTransfer object to set the file input value
+          const dataTransfer = new DataTransfer();
+          dataTransfer.items.add(file);
+          document.getElementById("file-input").files = dataTransfer.files;
+
+          // Show preview
+          const preview = document.getElementById("preview");
+          preview.src = URL.createObjectURL(blob);
+          preview.style.display = "block";
+
+          // Stop camera and hide elements
+          stopCamera();
+        }, "image/png");
+      }
+
+      // Cancel the camera and reset the page
+      function cancelCamera() {
+        const stream = video.srcObject;
+        if (stream) {
+          const tracks = stream.getTracks();
+          tracks.forEach((track) => track.stop());
+        }
+
+        video.style.display = "none";
+        document.getElementById("capture-button").style.display = "none";
+        document.getElementById("cancel-button").style.display = "none";
+        document.getElementById("open-camera-button").style.display =
+          "inline-block";
+      }
+
+      // Preview image from file input
+      function previewImage(event) {
+        const preview = document.getElementById("preview");
+        const file = event.target.files[0];
+
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = function (e) {
+            preview.src = e.target.result;
+            preview.style.display = "block";
+          };
+          reader.readAsDataURL(file);
+
+          // Enable feedback and shopping containers
+          enableContainers();
+        }
+      }
+
+      // Clear the uploaded or captured image
+      function clearImage() {
+        // Clear the uploaded or captured image
+        const preview = document.getElementById("preview");
+        const fileInput = document.querySelector('input[type="file"]');
+        const shoppingContainer = document.getElementById("shopping-container");
+        preview.style.display = "none";
+        fileInput.value = "";
+
+        // Clear feedback and shopping containers
+        const feedbackContent = document
+          .getElementById("feedback-container")
+          .querySelector(".scrollable-content");
+        feedbackContent.innerHTML =
+          "<p>No feedback available yet. Upload an image to see feedback.</p>";
+
+        const shoppingContent = document
+          .getElementById("shopping-container")
+          .querySelector(".scrollable-content");
+        shoppingContent.innerHTML =
+          "<p>No shopping suggestions available yet. Upload an image to see recommendations.</p>";
+
+        // Disable feedback and shopping containers
+        disableContainers();
+      }
+
+      // Enable feedback and shopping containers
+      function enableContainers() {
+        feedbackContainer.style.opacity = 1;
+        feedbackContainer.style.pointerEvents = "auto";
+        shoppingContainer.style.opacity = 1;
+        shoppingContainer.style.pointerEvents = "auto";
+      }
+
+      // Disable feedback and shopping containers
+      function disableContainers() {
+        feedbackContainer.style.opacity = 0.5;
+        feedbackContainer.style.pointerEvents = "none";
+        shoppingContainer.style.opacity = 0.5;
+        shoppingContainer.style.pointerEvents = "none";
+      }
+
+      document
+        .getElementById("upload-form")
+        .addEventListener("submit", function (event) {
+          event.preventDefault(); // Prevent the default form submission
+
+          const fileInput = document.querySelector('input[type="file"]');
+          const file = fileInput.files[0];
+
+          if (!file) {
+            alert("Please select an image first.");
+            return;
+          }
+
+          // Show loading state in feedback and shopping containers
+          showLoadingState();
+
+          const reader = new FileReader();
+          reader.onload = function (event) {
+            const base64Image = event.target.result;
+
+            // Send the image to Flask server via POST request
+            fetch("/process-image", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json", // Ensure this is set
+              },
+              body: JSON.stringify({ image: base64Image }), // Send base64 image as JSON
+            })
+              .then((response) => {
+                if (!response.ok) {
+                  throw new Error("Image Quality is Bad or Image has more than one face! Please try with Good Quality Image!");
+                }
+                return response.json();
+              })
+              .then((data) => {
+                console.log("Feedback:", data.feedback);
+                console.log(
+                  "Shopping Recommendations:",
+                  data.shopping_recommendations
+                );
+
+                // Check if the response contains an error
+                if (data.error) {
+                  throw new Error(data.error); // Throw an error to be caught in the catch block
+                }
+
+                if (
+                  !data.shopping_recommendations ||
+                  data.shopping_recommendations.length === 0
+                ) {
+                  console.error("No shopping recommendations found!");
+                  document.getElementById("shopping-container").innerHTML =
+                    "<p>No recommendations available.</p>";
+                  return;
+                }
+
+                // Clear previous content
+                const scrollableContent = feedbackContainer.querySelector(
+                  ".scrollable-content"
+                );
+                const shoppingContent = shoppingContainer.querySelector(
+                  ".scrollable-content"
+                );
+                scrollableContent.innerHTML = "";
+                shoppingContent.innerHTML = "";
+
+                // Display the plan (from data.planner.plan)
+                if (data.feedback.planner && data.feedback.planner.plan) {
+                  const planSection = document.createElement("div");
+                  // planSection.innerHTML = `<h3>Plan</h3><p>${data.planner.plan}</p>`;
+                  // scrollableContent.appendChild(planSection);
+                }
+
+                // Display the draft (from data.generate.draft)
+                if (data.feedback.generate && data.feedback.generate.draft) {
+                  const draftSection = document.createElement("div");
+                  draftSection.innerHTML = `<p>${data.feedback.generate.draft}</p>`;
+                  scrollableContent.appendChild(draftSection);
+                }
+
+                // Display shopping recommendations
+                if (
+                  data.shopping_recommendations &&
+                  Array.isArray(data.shopping_recommendations)
+                ) {
+                  data.shopping_recommendations.forEach((innerArray) => {
+                    if (Array.isArray(innerArray)) {
+                      innerArray.forEach((rec) => {
+                        if (rec && typeof rec === "object") {
+                          const item = document.createElement("div");
+                          item.innerHTML = `
+                                              <h3>${rec["Product Name"]}</h3>
+                                              <p>${rec["Description"]}</p>
+                                              <p>Price: ${rec["Price"]}</p>
+                                              <a href="${rec["Product Link"]}" target="_blank">View Product</a>
+                                              <hr>
+                                          `;
+                          shoppingContent.appendChild(item);
+                        } else {
+                          console.error(
+                            "Invalid product recommendation format:",
+                            rec
+                          );
+                        }
+                      });
+                    } else {
+                      console.error("Invalid inner array format:", innerArray);
+                    }
+                  });
+                } else {
+                  console.error(
+                    "Shopping recommendations data is missing or invalid."
+                  );
+                }
+
+                // Enable feedback and shopping containers
+                enableContainers();
+              })
+              .catch((error) => {
+                console.error("An error occurred:", error);
+                // Display the error message in both containers
+                const feedbackContent = feedbackContainer.querySelector(
+                  ".scrollable-content"
+                );
+                const shoppingContent = shoppingContainer.querySelector(
+                  ".scrollable-content"
+                );
+
+                feedbackContent.innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
+                shoppingContent.innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
+              })
+              .finally(() => {
+                // Hide loading state after the response is received
+                hideLoadingState();
+              });
+          };
+          reader.readAsDataURL(file); // Read the file as a base64-encoded string
+        });
+
+      // Function to show loading state
+      function showLoadingState() {
+        const feedbackContent = feedbackContainer.querySelector(
+          ".scrollable-content"
+        );
+        const shoppingContent = shoppingContainer.querySelector(
+          ".scrollable-content"
+        );
+
+        // Add loading spinner and text to feedback container
+        feedbackContent.innerHTML = `
+            <div class="loading-spinner"></div>
+            <div class="loading-text">Please wait while we analyze your image and craft personalized feedback...</div>
+        `;
+
+        // Add loading spinner and text to shopping container
+        shoppingContent.innerHTML = `
+            <div class="loading-spinner"></div>
+            <div class="loading-text">Discovering stylish recommendations tailored just for you...</div>
+        `;
+
+        // Enable containers (they are already enabled, but this ensures they are visible)
+        enableContainers();
+      }
+
+      // Function to hide loading state
+      function hideLoadingState() {
+        // No need to explicitly hide the loading state because it will be replaced by the response content
+      }
+      // Function to format text as HTML with headings, bullet points, and paragraphs
+      function formatTextAsHTML(text, title) {
+        // Split the text into sections based on headings
+        const sections = text.split(/\*\*(.*?)\*\*/g); // Split by **heading**
+        let html = `<h3>${title}</h3>`; // Add the main title
+
+        for (let i = 0; i < sections.length; i++) {
+          const section = sections[i].trim();
+          if (section) {
+            if (i % 2 === 1) {
+              // Odd indices are headings (due to split)
+              html += `<h4>${section}</h4>`; // Add subheading
+            } else {
+              // Even indices are content
+              // Split content into paragraphs
+              const paragraphs = section.split(/\n+/g);
+              paragraphs.forEach((paragraph) => {
+                if (paragraph.trim()) {
+                  // Check if the paragraph contains bullet points
+                  if (paragraph.startsWith("- ")) {
+                    // Convert bullet points to a list
+                    const listItems = paragraph
+                      .split(/\n-/g)
+                      .map((item) => item.trim());
+                    html += `<ul>`;
+                    listItems.forEach((item) => {
+                      if (item) {
+                        html += `<li>${item.replace("- ", "")}</li>`;
+                      }
+                    });
+                    html += `</ul>`;
+                  } else {
+                    // Add as a paragraph
+                    html += `<p>${paragraph}</p>`;
+                  }
+                }
+              });
+            }
+          }
+        }
+
+        return html;
+      }
+    </script>
+  </body>
+</html>
