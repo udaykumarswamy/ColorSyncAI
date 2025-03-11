@@ -16,6 +16,20 @@
 
 ---
 
+## **Future Enhancements**
+
+- **Advanced Recommendation Engine**: Integrate RAG (Retrieval-Augmented Generation) models to provide more precise and context-aware product recommendations.
+
+- **Virtual Try-On**: Add Augmented Reality (AR) support to let users virtually try on recommended clothing and accessories.
+
+- **Seasonal Trends**: Incorporate real-time fashion trend data to offer recommendations aligned with the latest styles and seasons.
+
+- **E-Commerce Integration**: Partner with online stores to provide direct purchase links for recommended products.
+
+- **Multi-Language Support**: Expand the app’s accessibility by adding support for multiple languages.
+
+---
+
 ## **Technologies Used**
 
 - **Frontend**:
