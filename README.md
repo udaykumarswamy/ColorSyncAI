@@ -1,8 +1,8 @@
-# **ColorSync - Style Made Easy**
+# **ColorSyncAI - Style Made Easy**
 
 ![Project Banner](https://www.hongkongda.com/wp-content/uploads/2024/05/aim_18741_1.jpg) 
 
-**ColorSync** is a web application that helps users discover personalized fashion and style recommendations based on their uploaded images. By analyzing features like skin tone, hair color, and eye color, ColorSync provides tailored feedback and shopping suggestions to enhance your style.
+**ColorSyncAI** is a web application that helps users discover personalized fashion and style recommendations based on their uploaded images. By analyzing features like skin tone, hair color, and eye color, ColorSync provides tailored feedback and shopping suggestions to enhance your style.
 
 ---
 
@@ -46,7 +46,7 @@ Follow these steps to set up the project locally:
 
 1. **Clone the Repository**:
    ```bash
-   git clone https://github.com/your-username/ColorSync.git
+   git clone https://github.com/udaykumarswamy/ColorSyncAI.git
    cd ColorSync
    ```
 
