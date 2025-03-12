@@ -47,7 +47,7 @@ Follow these steps to set up the project locally:
 1. **Clone the Repository**:
    ```bash
    git clone https://github.com/udaykumarswamy/ColorSyncAI.git
-   cd ColorSync
+   cd ColorSyncAI
    ```
 
 2. **Set Up a Virtual Environment**:
